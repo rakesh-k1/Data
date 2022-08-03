@@ -18,27 +18,28 @@ public class Data {
 
         System.setProperty("webdriver.chrome.driver", "src/test/resources/driver/chromedriver.exe");
         WebDriver driver = new ChromeDriver();
-        try {
+//        try {
             FileInputStream fileInputStream = new FileInputStream("src/test/resources/data/data.xlsx");
             Workbook wb = new XSSFWorkbook(fileInputStream);
             driver.get("https://www.brainbench.com/xml/bb/common/testcenter/consumer/alltests.xml");
             Thread.sleep(5000);
             driver.manage().window().maximize();
-//            List<WebElement> list = driver.findElements(By.xpath("//tr/td[1]/a"));
+            List<WebElement> list = driver.findElements(By.xpath("//tr/td[1]/a"));
             String job;
+            int j=0;
             Sheet sheet = wb.getSheet("Jobs");
-            for (int i = 0; i < 4; i=i+2) {
-                List<WebElement> list = driver.findElements(By.xpath("//tr/td[1]/a"));
+            for (int i = 0; i < (2*list.size()); i=i+2) {
+                list = driver.findElements(By.xpath("//tr/td[1]/a"));
                 System.out.println(list.size());
-                job = list.get(i).getText();
+                job = list.get(j).getText();
                 Row row = sheet.createRow(i);
                 Row row1 = sheet.createRow(i + 1);
                 row.createCell(1).setCellValue(job);
-                list.get(i).click();
+                list.get(j).click();
                 Thread.sleep(5000);
                 driver.findElement(By.xpath("//table[2]/tbody"));
                 List<WebElement> rows = driver.findElements(By.xpath("//table[2]/tbody/tr"));
-                System.out.println(rows.size());
+//                System.out.println(rows.size());
                 if(rows.size()>1){
                     int xy=0;
                     int heading=driver.findElements(By.xpath("//table[2]/tbody/tr/td/dl/dt")).size();
@@ -61,14 +62,14 @@ public class Data {
                         else{
                             colHead = driver.findElement(By.xpath(colHeadXpath));
                             colData = driver.findElements(By.xpath(colDataXpath));
-                            System.out.println(colHead.getText());
+//                            System.out.println(colHead.getText());
                             for(int z=0;z<1;z++) {
                                 String skill="";
                                 row.createCell(xy + 3).setCellValue(colHead.getText());
                                 for (int xx = 0; xx < colData.size(); xx++) {
                                     skill = skill + " \r\n" + colData.get(xx).getText();
                                 }
-                                System.out.println(skill);
+//                                System.out.println(skill);
                                 row1.createCell(xy+3).setCellValue(skill);
                             }
                             xy++;
@@ -77,39 +78,42 @@ public class Data {
 
 
                 }}
-                else{
-                    int xy=0;
+                else {
+                    int xy = 0;
                     List<WebElement> cols = driver.findElements(By.xpath("//table[2]/tbody/tr/td"));
-                    for (int x=1;x<= cols.size();x++) {
-                        int size=driver.findElements(By.xpath("//table[2]/tbody/tr/td[1]/dl/dt")).size();
+                    for (int x = 1; x <= cols.size(); x++) {
+                        int size = driver.findElements(By.xpath("//table[2]/tbody/tr/td[1]/dl/dt")).size();
                         for (int y = 1; y <= size; y++) {
                             String colHeadXpath = "//table[2]/tbody/tr/td[1]/dl[" + y + "]/dt";
                             String colDataXpath = "//table[2]/tbody/tr/td[1]/dl[" + y + "]/dt/following-sibling::dd";
                             String colsData = "//table[2]/tbody/tr/td[" + y + "]";
                             WebElement colHead = driver.findElement(By.xpath(colHeadXpath));
                             List<WebElement> colData = driver.findElements(By.xpath(colDataXpath));
-                            for(int z=0;z<1;z++) {
-                                String skill="";
+                            for (int z = 0; z < 1; z++) {
+                                String skill = "";
                                 row.createCell(xy + 3).setCellValue(colHead.getText());
                                 for (int xx = 0; xx < colData.size(); xx++) {
                                     skill = skill + " \r\n" + colData.get(xx).getText();
                                 }
-                                System.out.println(skill);
-                                row1.createCell(xy+3).setCellValue(skill);
+//                                System.out.println(skill);
+                                row1.createCell(xy + 3).setCellValue(skill);
                             }
                             xy++;
                         }
                     }
+
+                }
                 driver.navigate().back();
                 Thread.sleep(5000);
+                j++;
             }
             FileOutputStream fileOutputStream = new FileOutputStream("src/test/resources/data/data.xlsx");
             wb.write(fileOutputStream);
 
-        }}
-        finally{
-            driver.quit();
-        }
+//        }
+//        finally{
+//            driver.quit();
+//        }
 
     }
 }
